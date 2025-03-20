@@ -23,7 +23,7 @@ export const colors = {
 
   text: {
     primary: '#000000',
-    secondary: '#6B7280',
+    secondary: '#464B50',
     disabled: '#9CA3AF',
   },
 
