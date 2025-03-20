@@ -8,8 +8,6 @@ module.exports = {
   ],
 
   presets: [require('nativewind/preset')],
-  theme: {
-    extend: {},
-  },
+  theme: require('./theme/tailwind.ts').theme,
   plugins: [],
 };
