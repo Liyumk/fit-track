@@ -32,5 +32,5 @@ export const Button = forwardRef<View, ButtonProps>(
 const styles = {
   button:
     'items-center justify-center bg-primary-main rounded-[28px] px-4 py-2 min-h-[32px] min-w-[98px]',
-  buttonText: 'text-white text-md text-center',
+  buttonText: 'text-white text-md font-semibold text-center',
 };

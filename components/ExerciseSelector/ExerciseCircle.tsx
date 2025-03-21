@@ -1,106 +1,73 @@
-import { Ionicons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
+import { useWorkout } from 'context/WorkoutContext';
 import { Image } from 'expo-image';
 import { TouchableOpacity, View } from 'react-native';
 import { twMerge } from 'tailwind-merge';
 
-import { CheckIcon, PlayIcon } from '../../assets/svg/icons';
-import { ColorPath, getColor } from '../../theme/colors';
-
-type ExerciseCircleProps = {
+import BadgeSmall from './BadgeSmall';
+interface ExerciseCircleProps {
   image?: string;
   size?: number;
-  isDone?: boolean;
-  isActive?: boolean;
-  isEditMode?: boolean;
-  onPress?: () => void;
-  onLongPress?: () => void;
   onDelete?: () => void;
-  borderWidth?: number;
-  activeColor?: ColorPath;
-  inactiveColor?: ColorPath;
-  selectedBadgeColor?: ColorPath;
-  activeBadgeColor?: ColorPath;
-  isDragging?: boolean;
-};
+  index: number;
+}
 
-export const ExerciseCircle = ({
-  image,
-  size = 72,
-  isActive = false,
-  isDone = false,
-  onPress,
-  onLongPress,
-  onDelete,
-  borderWidth = 2,
-  activeColor = 'primary.main',
-  inactiveColor = 'white',
-  selectedBadgeColor = 'primary.main',
-  activeBadgeColor = 'primary.main',
-  isEditMode = false,
-  isDragging = false,
-}: ExerciseCircleProps) => {
+export const ExerciseCircle = ({ image, size = 72, onDelete, index }: ExerciseCircleProps) => {
+  const circleSize = size * 0.8888;
+  const { setIsEditMode, currentExerciseIndex, selectExercise, isEditMode, workout } = useWorkout();
+  const isActive = currentExerciseIndex === index;
+  const isActiveBadge = isActive && !isEditMode;
+  const isLastItem = index === workout?.exercises?.length;
+  const isAddExerciseButton = isEditMode && isLastItem;
+
+  const onExerciseLongPress = () => {
+    setIsEditMode(true);
+  };
+
+  const onSelectExercise = (index: number) => {
+    if (isEditMode) {
+      if (isAddExerciseButton) {
+        //Add more exercises
+      }
+      return;
+    }
+
+    selectExercise(index);
+  };
+
   return (
     <TouchableOpacity
-      onPress={onPress}
-      onLongPress={onLongPress}
-      className={twMerge(styles.container, isDragging && 'opacity-50')}
-      style={{
-        width: size,
-        height: size,
-      }}>
+      onPress={() => onSelectExercise(index)}
+      onLongPress={onExerciseLongPress}
+      className={twMerge(styles.container, isActiveBadge && 'border-primary')}
+      style={{ width: size, height: size }}>
       <View
-        className={twMerge(styles.circle, isActive && 'bg-primary-main')}
+        className={styles.circle}
         style={{
-          borderWidth,
-          borderColor: isActive && !isEditMode ? getColor(activeColor) : getColor(inactiveColor),
-          backgroundColor: getColor(inactiveColor),
-          width: size * 0.8888,
-          height: size * 0.8888,
+          width: circleSize,
+          height: circleSize,
         }}>
         {image && (
           <Image
-            style={{ width: '100%', height: '100%' }}
             source={{ uri: image }}
+            style={{ width: '100%', height: '100%' }}
             className={styles.image}
           />
         )}
+        {isAddExerciseButton && <Feather name="plus" size={24} color="black" />}
       </View>
-
-      {isEditMode && (
-        <TouchableOpacity
-          onPress={onDelete}
-          className="absolute -right-2 top-0 h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-red-500">
-          <Ionicons name="remove" size={12} color="white" />
-        </TouchableOpacity>
-      )}
-
-      {!isEditMode && isDone && !isActive && (
-        <View
-          className={styles.badge}
-          style={{
-            backgroundColor: getColor(selectedBadgeColor),
-          }}>
-          <CheckIcon size={12} color={getColor('text.primary')} />
-        </View>
-      )}
-      {!isEditMode && isActive && (
-        <View
-          className={styles.badge}
-          style={{
-            backgroundColor: getColor(activeBadgeColor),
-          }}>
-          <PlayIcon size={10} color={getColor('text.primary')} />
-        </View>
-      )}
+      <BadgeSmall index={index} onDelete={onDelete} />
     </TouchableOpacity>
   );
 };
 
 const styles = {
   container:
-    'relative items-center justify-center rounded-full border-2 border-white p-1 bg-background ',
-  circle: 'w-full h-full rounded-full items-center justify-center overflow-hidden',
+    'relative items-center justify-center rounded-full border-2 border-white bg-background',
+  circle:
+    'w-full h-full rounded-full items-center justify-center overflow-hidden bg-background border-1 border-background',
   image: 'w-full h-full',
   badge:
-    'absolute border-2 border-white bottom-1 right-1 rounded-full w-6 h-6 items-center justify-center',
-};
+    'absolute border-2 border-white bottom-0 right-1 rounded-full w-5 h-5 flex items-center justify-center',
+  deleteButton: 'absolute right-0 top-0 h-5 w-5 items-center justify-center rounded-full',
+} as const;

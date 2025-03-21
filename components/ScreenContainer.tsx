@@ -1,4 +1,4 @@
-import { ScrollView, View } from 'react-native';
+import { View } from 'react-native';
 import { Edge, SafeAreaView } from 'react-native-safe-area-context';
 
 import { CustomHeader } from './CustomHeader';
@@ -19,10 +19,10 @@ export const ScreenContainer = ({
 }: ScreenContainerProps) => {
   return (
     <SafeAreaView className={styles.containerSafeArea}>
-      <ScrollView contentContainerClassName={styles.container}>
+      <View className={styles.container}>
         {showHeader && <CustomHeader rightElement={rightElement} title={title} />}
         {children}
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
