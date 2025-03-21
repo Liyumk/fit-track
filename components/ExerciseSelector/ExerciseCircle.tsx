@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { useWorkout } from 'context/WorkoutContext';
 import { Image } from 'expo-image';
-import { TouchableOpacity, View } from 'react-native';
+import { StyleProp, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { twMerge } from 'tailwind-merge';
 
 import BadgeSmall from './BadgeSmall';
@@ -9,20 +9,25 @@ interface ExerciseCircleProps {
   image?: string;
   size?: number;
   onDelete?: () => void;
+  onLongPress?: () => void;
   index: number;
+  style?: StyleProp<ViewStyle>;
 }
 
-export const ExerciseCircle = ({ image, size = 72, onDelete, index }: ExerciseCircleProps) => {
+export const ExerciseCircle = ({
+  image,
+  size = 72,
+  onDelete,
+  onLongPress,
+  index,
+  style,
+}: ExerciseCircleProps) => {
   const circleSize = size * 0.8888;
-  const { setIsEditMode, currentExerciseIndex, selectExercise, isEditMode, workout } = useWorkout();
+  const { currentExerciseIndex, selectExercise, isEditMode, workout } = useWorkout();
   const isActive = currentExerciseIndex === index;
   const isActiveBadge = isActive && !isEditMode;
   const isLastItem = index === workout?.exercises?.length;
   const isAddExerciseButton = isEditMode && isLastItem;
-
-  const onExerciseLongPress = () => {
-    setIsEditMode(true);
-  };
 
   const onSelectExercise = (index: number) => {
     if (isEditMode) {
@@ -38,9 +43,9 @@ export const ExerciseCircle = ({ image, size = 72, onDelete, index }: ExerciseCi
   return (
     <TouchableOpacity
       onPress={() => onSelectExercise(index)}
-      onLongPress={onExerciseLongPress}
+      onLongPress={onLongPress}
       className={twMerge(styles.container, isActiveBadge && 'border-primary')}
-      style={{ width: size, height: size }}>
+      style={[{ width: size, height: size }, style]}>
       <View
         className={styles.circle}
         style={{

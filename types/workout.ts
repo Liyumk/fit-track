@@ -23,4 +23,7 @@ export type WorkoutContextType = {
   selectExercise: (index: number) => void;
   isEditMode: boolean;
   setIsEditMode: (isEditMode: boolean) => void;
+  updateWorkoutExercises: (exercises: Exercise[]) => void;
+  saveChanges: () => void;
+  discardChanges: () => void;
 };

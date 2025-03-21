@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 
 import workoutData from '../constants/workouts.json';
-import { Workout, WorkoutContextType } from '../types/workout';
+import { Workout, WorkoutContextType, Exercise } from '../types/workout';
 
 const WorkoutContext = createContext<WorkoutContextType | undefined>(undefined);
 
 export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [workout, setWorkout] = useState<Workout | null>(null);
+  const [tempExercises, setTempExercises] = useState<Exercise[] | null>(null);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(-1);
   const [isWorkoutStarted, setIsWorkoutStarted] = useState(false);
   const [completedExercises, setCompletedExercises] = useState<Set<number>>(new Set());
@@ -24,6 +25,42 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setCurrentExerciseIndex(-1);
     setIsWorkoutStarted(false);
     setCompletedExercises(new Set());
+  }, []);
+
+  const updateWorkoutExercises = useCallback(
+    (exercises: Exercise[]) => {
+      if (isEditMode) {
+        setTempExercises(exercises);
+      } else {
+        setWorkout((prev) => (prev ? { ...prev, exercises } : null));
+      }
+    },
+    [isEditMode]
+  );
+
+  const handleSetIsEditMode = useCallback(
+    (newIsEditMode: boolean) => {
+      if (newIsEditMode) {
+        setTempExercises(workout?.exercises ?? null);
+      } else {
+        setTempExercises(null);
+      }
+      setIsEditMode(newIsEditMode);
+    },
+    [workout?.exercises]
+  );
+
+  const saveChanges = useCallback(() => {
+    if (tempExercises && workout) {
+      setWorkout({ ...workout, exercises: tempExercises });
+    }
+    setTempExercises(null);
+    setIsEditMode(false);
+  }, [tempExercises, workout]);
+
+  const discardChanges = useCallback(() => {
+    setTempExercises(null);
+    setIsEditMode(false);
   }, []);
 
   const goToNextExercise = useCallback(() => {
@@ -51,7 +88,7 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }, []);
 
   const value = {
-    workout,
+    workout: isEditMode && tempExercises ? { ...workout!, exercises: tempExercises } : workout,
     currentExerciseIndex,
     isWorkoutStarted,
     completedExercises,
@@ -62,7 +99,10 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
     markExerciseAsCompleted,
     selectExercise,
     isEditMode,
-    setIsEditMode,
+    setIsEditMode: handleSetIsEditMode,
+    updateWorkoutExercises,
+    saveChanges,
+    discardChanges,
   };
 
   return <WorkoutContext.Provider value={value}>{children}</WorkoutContext.Provider>;
