@@ -20,13 +20,6 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setCompletedExercises(new Set());
   }, []);
 
-  const endWorkout = useCallback(() => {
-    setWorkout(null);
-    setCurrentExerciseIndex(-1);
-    setIsWorkoutStarted(false);
-    setCompletedExercises(new Set());
-  }, []);
-
   const updateWorkoutExercises = useCallback(
     (exercises: Exercise[]) => {
       if (isEditMode) {
@@ -63,18 +56,6 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setIsEditMode(false);
   }, []);
 
-  const goToNextExercise = useCallback(() => {
-    if (workout && currentExerciseIndex < workout.exercises.length - 1) {
-      setCurrentExerciseIndex((prev) => prev + 1);
-    }
-  }, [workout, currentExerciseIndex]);
-
-  const goToPreviousExercise = useCallback(() => {
-    if (currentExerciseIndex > 0) {
-      setCurrentExerciseIndex((prev) => prev - 1);
-    }
-  }, [currentExerciseIndex]);
-
   const markExerciseAsCompleted = useCallback((index: number) => {
     setCompletedExercises((prev) => {
       const newSet = new Set(prev);
@@ -93,9 +74,6 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
     isWorkoutStarted,
     completedExercises,
     startWorkout,
-    endWorkout,
-    goToNextExercise,
-    goToPreviousExercise,
     markExerciseAsCompleted,
     selectExercise,
     isEditMode,

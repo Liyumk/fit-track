@@ -23,7 +23,9 @@ export const ExerciseCircle = ({
   style,
 }: ExerciseCircleProps) => {
   const circleSize = size * 0.8888;
-  const { currentExerciseIndex, selectExercise, isEditMode, workout } = useWorkout();
+  const { currentExerciseIndex, selectExercise, isEditMode, workout, markExerciseAsCompleted } =
+    useWorkout();
+
   const isActive = currentExerciseIndex === index;
   const isActiveBadge = isActive && !isEditMode;
   const isLastItem = index === workout?.exercises?.length;
@@ -37,6 +39,9 @@ export const ExerciseCircle = ({
       return;
     }
 
+    if (currentExerciseIndex >= 0) {
+      markExerciseAsCompleted(currentExerciseIndex);
+    }
     selectExercise(index);
   };
 

@@ -16,9 +16,6 @@ export type WorkoutContextType = {
   isWorkoutStarted: boolean;
   completedExercises: Set<number>;
   startWorkout: () => void;
-  endWorkout: () => void;
-  goToNextExercise: () => void;
-  goToPreviousExercise: () => void;
   markExerciseAsCompleted: (index: number) => void;
   selectExercise: (index: number) => void;
   isEditMode: boolean;
